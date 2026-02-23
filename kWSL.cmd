@@ -74,7 +74,7 @@ ECHO [%TIME:~0,8%] Git clone and update repositories (~1m00s)
 
 :APTRELY
 START /MIN /WAIT "Git Clone kWSL" %GO% "cd /tmp ; rm -rf kWSL ; git clone -b %BRANCH% --depth=1 https://github.com/%GITORG%/%GITPRJ%.git ; cp /tmp/kWSL/keyrings/*.gpg /etc/apt/trusted.gpg.d/"
-START /MIN /WAIT "curl -fsSL https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor | sudo tee /usr/share/keyrings/google-linux.gpg > /dev/null && echo \"deb [signed-by=/usr/share/keyrings/google-linux.gpg] http://dl.google.com/linux/chrome-remote-desktop/deb stable main\" | sudo tee /etc/apt/sources.list.d/chrome-remote-desktop.list && sudo apt update" %GO% "apt-get update 2> /tmp/apterr"
+START /MIN /WAIT "apt-get update" %GO% "curl -fsSL https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor | tee /usr/share/keyrings/google-linux.gpg > /dev/null && echo \"deb [signed-by=/usr/share/keyrings/google-linux.gpg] http://dl.google.com/linux/chrome-remote-desktop/deb stable main\" | tee /etc/apt/sources.list.d/chrome-remote-desktop.list && apt-get update 2> /tmp/apterr"
 FOR /F %%A in ("%DISTROFULL%\rootfs\tmp\apterr") do If %%~zA NEQ 0 GOTO APTRELY
 START /MIN /WAIT "apt-get update" %GO% "add-apt-repository -y ppa:videolan/master-daily 2>> /tmp/apterr"
 START /MIN /WAIT "apt-fast" %GO% "DEBIAN_FRONTEND=noninteractive dpkg -i /tmp/kWSL/deb/aria2*.deb /tmp/kWSL/deb/libaria2-0*.deb /tmp/kWSL/deb/libssh2-1*.deb /tmp/kWSL/deb/libc-ares2*.deb ; chmod +x /tmp/kWSL/dist/usr/local/bin/apt-fast ; cp -p /tmp/kWSL/dist/usr/local/bin/apt-fast /usr/local/bin" > NUL
